@@ -123,15 +123,16 @@ public class EmployeeService {
 
     @Transactional
     public ErrorKinds update(Employee updatedEmployee, Employee existingEmployee) {
-        if (!StringUtils.isBlank(updatedEmployee.getPassword())) {
+        if (StringUtils.isBlank(updatedEmployee.getPassword())) {
             ErrorKinds result = employeePasswordCheck(updatedEmployee);
             if (ErrorKinds.CHECK_OK != result) {
                 return result;
             }
-            updatedEmployee.setPassword(passwordEncoder.encode(updatedEmployee.getPassword()));
-        } else {
             updatedEmployee.setPassword(existingEmployee.getPassword());
+        } else {
+            updatedEmployee.setPassword(passwordEncoder.encode(updatedEmployee.getPassword()));
         }
+
         existingEmployee.setDeleteFlg(false);
 
         LocalDateTime now = LocalDateTime.now();
