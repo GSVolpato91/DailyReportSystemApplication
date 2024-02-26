@@ -109,12 +109,21 @@ public class EmployeeController {
     }
     @PostMapping("/{code}/update")
     public String update(@Validated Employee employee, BindingResult res,@PathVariable("code") String code, Model model) {
-        if (res.hasErrors()) {
-            return edit(code, employee, model);
+
+            ErrorKinds result = employeeService.save(employee);
+
+        if (ErrorMessage.contains(result)) {
+            model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+            return edit(null, employee, model);
         }
-        employeeService.update(employee, employee);
+        if (res.hasErrors()) {
+            return edit(null, employee, model);
+        }
+        Employee existingEmployee = employeeService.findByCode(code);
+        employeeService.update(employee, existingEmployee);
         return "redirect:/employees";
     }
+
     // 従業員削除処理
     @PostMapping(value = "/{code}/delete")
     public String delete(@PathVariable String code, @AuthenticationPrincipal UserDetail userDetail, Model model) {

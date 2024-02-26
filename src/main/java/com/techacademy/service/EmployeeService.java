@@ -14,8 +14,6 @@ import com.techacademy.constants.ErrorKinds;
 import com.techacademy.entity.Employee;
 import com.techacademy.repository.EmployeeRepository;
 
-import io.micrometer.common.util.StringUtils;
-
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -123,21 +121,21 @@ public class EmployeeService {
 
     @Transactional
     public ErrorKinds update(Employee updatedEmployee, Employee existingEmployee) {
-        if (StringUtils.isBlank(updatedEmployee.getPassword())) {
+        if ("".equals(existingEmployee.getPassword())) {
+            updatedEmployee.setPassword(existingEmployee.getPassword());
+        } else {
+
             ErrorKinds result = employeePasswordCheck(updatedEmployee);
             if (ErrorKinds.CHECK_OK != result) {
                 return result;
             }
-            updatedEmployee.setPassword(existingEmployee.getPassword());
-        } else {
-            updatedEmployee.setPassword(passwordEncoder.encode(updatedEmployee.getPassword()));
         }
 
-        existingEmployee.setDeleteFlg(false);
+        updatedEmployee.setDeleteFlg(existingEmployee.isDeleteFlg());
+        updatedEmployee.setCreatedAt(existingEmployee.getCreatedAt());
 
-        LocalDateTime now = LocalDateTime.now();
-        updatedEmployee.setCreatedAt(now);
-        updatedEmployee.setUpdatedAt(now);
+        updatedEmployee.setUpdatedAt(LocalDateTime.now());
+
         employeeRepository.save(updatedEmployee);
         return ErrorKinds.SUCCESS;
     }
