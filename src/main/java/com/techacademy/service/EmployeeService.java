@@ -120,15 +120,12 @@ public class EmployeeService {
     }
 
     public ErrorKinds update(Employee updatedEmployee, Employee existingEmployee) {
-        if ("".equals(existingEmployee.getPassword())) {
-            updatedEmployee.setPassword(existingEmployee.getPassword());
-        } else {
 
             ErrorKinds result = employeePasswordCheck(updatedEmployee);
             if (ErrorKinds.CHECK_OK != result) {
                 return result;
+
             }
-        }
 
         updatedEmployee.setDeleteFlg(existingEmployee.isDeleteFlg());
         updatedEmployee.setCreatedAt(existingEmployee.getCreatedAt());
