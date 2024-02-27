@@ -112,15 +112,21 @@ public class EmployeeController {
     public String update(@Validated Employee employee, BindingResult res, @PathVariable("code") String code,
             Model model) {
         Employee existingEmployee = employeeService.findByCode(code);
-        ErrorKinds result = employeeService.update(employee, existingEmployee);
-        if (res.hasErrors()) {
+        if (res.hasErrors())
             return edit(null, employee, model);
+        if ("".equals(employee.getPassword())) {
+            existingEmployee.setPassword(employee.getPassword());
         }
+        else {
+            ErrorKinds result = employeeService.update(employee, existingEmployee);
+           if (res.hasErrors())
+               return edit(null, employee, model);
         if (ErrorMessage.contains(result)) {
             model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
             return edit(null, employee, model);
         }
         employeeService.update(employee, existingEmployee);
+        }
         return "redirect:/employees";
     }
 
