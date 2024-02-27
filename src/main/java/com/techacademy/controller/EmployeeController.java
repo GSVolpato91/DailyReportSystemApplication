@@ -96,30 +96,29 @@ public class EmployeeController {
 
         return "redirect:/employees";
     }
-    //従業員更新画面
+
+    // 従業員更新画面
     @GetMapping(value = "/{code}/update")
-    public String edit(@PathVariable("code") String code, Employee employee, Model model ) {
-    if( code != null) {
-        model.addAttribute("employee", employeeService.findByCode(code));
-        }
-        else {
+    public String edit(@PathVariable("code") String code, Employee employee, Model model) {
+        if (code != null) {
+            model.addAttribute("employee", employeeService.findByCode(code));
+        } else {
             model.addAttribute("employee", employee);
-            }
-    return "employees/update";
+        }
+        return "employees/update";
     }
+
     @PostMapping("/{code}/update")
-    public String update(@Validated Employee employee, BindingResult res,@PathVariable("code") String code, Model model) {
+    public String update(@Validated Employee employee, BindingResult res, @PathVariable("code") String code,
+            Model model) {
 
-            ErrorKinds result = employeeService.save(employee);
+        Employee existingEmployee = employeeService.findByCode(code);
+        ErrorKinds result = employeeService.update(employee, existingEmployee);
 
-        if (ErrorMessage.contains(result)) {
+        if (res.hasErrors()) {
             model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
             return edit(null, employee, model);
         }
-        if (res.hasErrors()) {
-            return edit(null, employee, model);
-        }
-        Employee existingEmployee = employeeService.findByCode(code);
         employeeService.update(employee, existingEmployee);
         return "redirect:/employees";
     }

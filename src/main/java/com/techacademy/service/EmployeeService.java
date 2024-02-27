@@ -119,7 +119,6 @@ public class EmployeeService {
         return passwordLength < 8 || 16 < passwordLength;
     }
 
-    @Transactional
     public ErrorKinds update(Employee updatedEmployee, Employee existingEmployee) {
         if ("".equals(existingEmployee.getPassword())) {
             updatedEmployee.setPassword(existingEmployee.getPassword());
