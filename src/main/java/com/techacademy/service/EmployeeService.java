@@ -135,9 +135,7 @@ public class EmployeeService {
         }
         updatedEmployee.setDeleteFlg(existingEmployee.isDeleteFlg());
         updatedEmployee.setCreatedAt(existingEmployee.getCreatedAt());
-
         updatedEmployee.setUpdatedAt(LocalDateTime.now());
-
         employeeRepository.save(updatedEmployee);
         return ErrorKinds.SUCCESS;
     }
