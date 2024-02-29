@@ -121,11 +121,11 @@ public class EmployeeService {
 
     @Transactional
     public ErrorKinds update(Employee updatedEmployee, Employee existingEmployee) {
-            Employee abc = existingEmployee;
 
-        if ("".equals(updatedEmployee.getPassword())) {
-            abc = findByCode(abc.getCode());
-            updatedEmployee.setPassword(existingEmployee.getPassword());
+        String existingPassword = existingEmployee.getPassword();
+            String newPassword = updatedEmployee.getPassword();
+            if("".equals(newPassword)) {
+                updatedEmployee.setPassword(existingPassword);
         } else {
             ErrorKinds result = employeePasswordCheck(updatedEmployee);
             if (ErrorKinds.CHECK_OK != result) {

@@ -21,24 +21,22 @@ import com.techacademy.service.EmployeeService;
 import com.techacademy.service.UserDetail;
 
 @Controller
-@RequestMapping("employees")
-public class EmployeeController {
+@RequestMapping("reports")
+public class ReportController {
 
     private final EmployeeService employeeService;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService) {
+    public ReportController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
 
     // 従業員一覧画面
     @GetMapping
     public String list(Model model) {
-
         model.addAttribute("listSize", employeeService.findAll().size());
         model.addAttribute("employeeList", employeeService.findAll());
-
-        return "employees/list";
+        return "reports/list";
     }
 
     // 従業員詳細画面
@@ -112,12 +110,10 @@ public class EmployeeController {
     public String update(@Validated Employee employee, BindingResult res, @PathVariable("code") String code,
             Model model) {
         Employee existingEmployee = employeeService.findByCode(code);
-        String existingPassword = existingEmployee.getPassword();
-        String newPassword = employee.getPassword();
         if (res.hasErrors())
             return edit(null, employee, model);
-        if("".equals(newPassword)) {
-            existingEmployee.setPassword(existingPassword);
+        if ("".equals(employee.getPassword())) {
+            existingEmployee.setPassword(employee.getPassword());
         } else {
             ErrorKinds result = employeeService.update(employee, existingEmployee);
             if (res.hasErrors())
