@@ -116,7 +116,7 @@ public class EmployeeController {
         String newPassword = employee.getPassword();
         if (res.hasErrors())
             return edit(null, employee, model);
-        if("".equals(newPassword)) {
+        if ("".equals(newPassword)) {
             existingEmployee.setPassword(existingPassword);
         } else {
             ErrorKinds result = employeeService.update(employee, existingEmployee);
