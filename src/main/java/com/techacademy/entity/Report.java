@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.Column;
@@ -14,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -24,42 +26,29 @@ import lombok.Data;
 @SQLRestriction("delete_flg = false")
 public class Report {
 
-    public static enum Role {
-        GENERAL("一般"), ADMIN("管理者");
-
-        private String name;
-
-        private Role(String name) {
-            this.name = name;
-        }
-
-        public String getValue() {
-            return this.name;
-        }
-    }
     // ID
     @Id
     @Column
-    @NotEmpty
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull
     @Column(nullable = false)
-    @DateTimeFormat(pattern = " yyyy-MM-dd ")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate reportDate;
 
-    @Column(columnDefinition = "VARCHAR(100)", nullable = false)
+    @Column(columnDefinition = "VARCHAR(100)")
+    @Length(max = 100)
     @NotEmpty
     private String title;
 
-    @Column(columnDefinition = "LONGTEXT", nullable = false)
+    @Column(columnDefinition = "LONGTEXT")
+    @Length (max = 600)
     @NotEmpty
     private String content;
 
     // Foreign key
     @Column(name = "employee_code", length = 10)
-    @NotEmpty
     private String employeeCode;
 
     @Column(columnDefinition = "TINYINT", nullable = false)
