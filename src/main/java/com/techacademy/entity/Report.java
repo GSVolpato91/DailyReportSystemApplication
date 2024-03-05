@@ -15,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -48,8 +47,12 @@ public class Report {
     private String content;
 
     // Foreign key
-    @Column(name = "employee_code", length = 10)
+    @Column(name = "employee_code", length = 10, insertable=false, updatable=false)
     private String employeeCode;
+
+    @ManyToOne
+    @JoinColumn (name = " employee_code " , referencedColumnName = " code " , nullable = false )
+    private Employee employee;
 
     @Column(columnDefinition = "TINYINT", nullable = false)
     private boolean deleteFlg;
@@ -60,8 +63,5 @@ public class Report {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_code", referencedColumnName = "code", nullable = false, insertable = false, updatable = false)
-    private Employee employee;
 
 }

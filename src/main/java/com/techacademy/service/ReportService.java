@@ -38,17 +38,17 @@ public class ReportService {
         if (ErrorKinds.CHECK_OK != result) {
             return result;
         }
-
         LocalDateTime now = LocalDateTime.now();
+        report.setDeleteFlg(false);
         report.setCreatedAt(now);
         report.setUpdatedAt(now);
-
-        report.setId(null);
 
         reportRepository.save(report);
 
         return ErrorKinds.SUCCESS;
     }
+
+
 
     private ErrorKinds validateReport(Report report) {
         LocalDate reportDate = report.getReportDate();

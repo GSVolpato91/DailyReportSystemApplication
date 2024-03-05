@@ -28,9 +28,9 @@
                                     </thead>
                                     <tbody>
                                         <tr th:each="report :${reportList}">
-                                            <td class="align-middle" th:text="${report.employee.name}"></td>
+                                            <td class="align-middle" th:text="${report != null and report.employee != null ? report.employee.name : ''}"></td>
                                             <td class="align-middle"
-                                                th:text=" ${#temporals.format(report.createdAt, 'yyyy-MM-dd')} ">DATE
+                                                th:text=" ${#temporals.format(report.createdAt, 'yyyy-MM-dd')} ">
                                             </td>
                                             <td class="align-middle" th:text="${report.title}"></td>
                                             <td class="align-middle">
