@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.techacademy.constants.ErrorKinds;
 import com.techacademy.entity.Employee;
+import com.techacademy.entity.Report;
 import com.techacademy.repository.EmployeeRepository;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +22,13 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final PasswordEncoder passwordEncoder;
+    private ReportService reportService;
 
     @Autowired
-    public EmployeeService(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder) {
+    public EmployeeService(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder, ReportService reportService) {
         this.employeeRepository = employeeRepository;
         this.passwordEncoder = passwordEncoder;
+        this.reportService = reportService;
     }
 
     // 従業員保存
@@ -65,6 +68,12 @@ public class EmployeeService {
         LocalDateTime now = LocalDateTime.now();
         employee.setUpdatedAt(now);
         employee.setDeleteFlg(true);
+
+        List<Report> reportList = reportService.findByEmployee(employee);
+
+        for (Report report : reportList) {
+            reportService.delete(report.getId(), null);
+        }
 
         return ErrorKinds.SUCCESS;
     }
@@ -123,9 +132,9 @@ public class EmployeeService {
     public ErrorKinds update(Employee updatedEmployee, Employee existingEmployee) {
 
         String existingPassword = existingEmployee.getPassword();
-            String newPassword = updatedEmployee.getPassword();
-            if("".equals(newPassword)) {
-                updatedEmployee.setPassword(existingPassword);
+        String newPassword = updatedEmployee.getPassword();
+        if ("".equals(newPassword)) {
+            updatedEmployee.setPassword(existingPassword);
         } else {
             ErrorKinds result = employeePasswordCheck(updatedEmployee);
             if (ErrorKinds.CHECK_OK != result) {

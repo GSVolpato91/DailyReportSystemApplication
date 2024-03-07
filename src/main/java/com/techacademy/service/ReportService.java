@@ -35,6 +35,9 @@ public class ReportService {
         Report report = option.orElse(null);
         return report;
     }
+    public List <Report> findByEmployee(Employee employee) {
+        return reportRepository.findByEmployee(employee);
+    }
 
     // SAVE
     @Transactional
