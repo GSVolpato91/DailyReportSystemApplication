@@ -36,8 +36,7 @@ public class ReportService {
         return report;
     }
 
-
-
+    // SAVE
     @Transactional
     public ErrorKinds save(Report report, UserDetail userDetail) {
 
@@ -45,10 +44,18 @@ public class ReportService {
         report.getEmployeeCode();
         report.setEmployee(existingEmployee);
 
-
-        ErrorKinds result = validateReport(report, userDetail);
+        ErrorKinds result = validateReport(report);
         if (ErrorKinds.CHECK_OK != result) {
             return result;
+        }
+        List<Report> existingReports = reportRepository
+                .findByEmployeeCodeAndReportDate(userDetail.getEmployee().getCode(), report.getReportDate());
+
+        for (Report existingReport : existingReports) {
+            if (existingReport.getEmployeeCode().equals(userDetail.getEmployee().getCode())
+                    && existingReport.getReportDate().isEqual(report.getReportDate())) {
+                return ErrorKinds.DATECHECK_ERROR;
+            }
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -61,19 +68,10 @@ public class ReportService {
         return ErrorKinds.SUCCESS;
     }
 
-    private ErrorKinds validateReport(Report report, UserDetail userDetail) {
-        List<Report> existingReports = reportRepository.findByEmployeeCodeAndReportDate(
-                userDetail.getEmployee().getCode(),
-                report.getReportDate()
-        );
-
-        if (!existingReports.isEmpty()) {
-            return ErrorKinds.DATECHECK_ERROR;
-        }
-
+    // VALIDATE
+    private ErrorKinds validateReport(Report report) {
         LocalDate reportDate = report.getReportDate();
-
-        if (reportDate == null ) {
+        if (reportDate == null) {
             return ErrorKinds.BLANK_ERROR;
         }
         String abc = report.getTitle();
@@ -87,7 +85,7 @@ public class ReportService {
         return ErrorKinds.CHECK_OK;
     }
 
-
+    // DELETE
     @Transactional
     public ErrorKinds delete(Integer id, UserDetail userDetail) {
 
@@ -100,22 +98,29 @@ public class ReportService {
 
     }
 
-@Transactional
-public ErrorKinds update(Report updatedReport, Report existingReport) {
+    // UPDATE
+    @Transactional
+    public ErrorKinds update(Report report, UserDetail userDetail) {
 
-    ErrorKinds result = validateReport(updatedReport, null);
+        ErrorKinds result = validateReport(report);
         if (ErrorKinds.CHECK_OK != result) {
             return result;
-
         }
+        List<Report> existingReports = reportRepository
+                .findByEmployeeCodeAndReportDate(userDetail.getEmployee().getCode(), report.getReportDate());
 
-    updatedReport.setDeleteFlg(existingReport.isDeleteFlg());
-    updatedReport.setCreatedAt(existingReport.getCreatedAt());
-    updatedReport.setUpdatedAt(LocalDateTime.now());
-    reportRepository.save(updatedReport);
-    return ErrorKinds.SUCCESS;
+        for (Report existingReport : existingReports) {
+            if (existingReport.getEmployeeCode().equals(userDetail.getEmployee().getCode())
+                    && existingReport.getReportDate().isEqual(report.getReportDate())) {
+                return ErrorKinds.DATECHECK_ERROR;
+            }
+            LocalDateTime now = LocalDateTime.now();
+            report.setDeleteFlg(false);
+            report.setCreatedAt(now);
+            report.setUpdatedAt(now);
+
+            reportRepository.save(report);
+        }
+        return ErrorKinds.SUCCESS;
+    }
 }
-}
-
-
-

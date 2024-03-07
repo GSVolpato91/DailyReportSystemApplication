@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -28,7 +29,7 @@ public class Report {
     // ID
     @Id
     @Column
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull
@@ -38,20 +39,20 @@ public class Report {
 
     @Column(columnDefinition = "VARCHAR(100)")
     @Length(max = 100)
-    @NotEmpty
+    @NotBlank
     private String title;
 
     @Column(columnDefinition = "LONGTEXT")
-    @Length (max = 600)
+    @Length(max = 600)
     @NotEmpty
     private String content;
 
     // Foreign key
-    @Column(columnDefinition="VARCHAR(10)", name = "employee_code", length = 10, insertable=false, updatable=false)
+    @Column(columnDefinition = "VARCHAR(10)", name = "employee_code", length = 10, insertable = false, updatable = false)
     private String employeeCode;
 
     @ManyToOne
-    @JoinColumn (name = " employee_code " , referencedColumnName = " code " , nullable = false )
+    @JoinColumn(name = "employee_code", referencedColumnName = " code ", nullable = false)
     private Employee employee;
 
     @Column(columnDefinition = "TINYINT", nullable = false)
@@ -62,6 +63,5 @@ public class Report {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-
 
 }

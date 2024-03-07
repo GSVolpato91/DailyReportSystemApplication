@@ -24,8 +24,8 @@
                                     <div class="col-md-5">
                                         <label class="form-label" for="date">日付</label>
                                         <input type="date" class="form-control" id="date" th:field="*{reportDate}" />
-                                        <p class="text-danger" th:if="${#fields.hasErrors('reportDate')}"
-                                            th:errors="*{reportDate}"></p>
+                                         <span th:errors="*{reportDate}" class="text-danger"></span>
+                                            <span th:if="${reportDateError} neq null" th:text="${reportDateError}" class="text-danger"></span>
                                     </div>
                                     <div class="mb-3">
                                     <div class="mb-3">
