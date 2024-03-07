@@ -35,6 +35,10 @@ public class ReportController {
         return "reports/list";
     }
 
+
+
+    //DETAIL
+
     @GetMapping(value = "/{id}/")
     public String detail(@PathVariable Integer id, Model model) {
         model.addAttribute("report", reportService.findById(id));
@@ -42,31 +46,88 @@ public class ReportController {
         return "reports/detail";
     }
 
+
+
+    //NEW
+
     @GetMapping(value = "/add")
     public String create(@ModelAttribute Report report, @AuthenticationPrincipal UserDetail userDetail, Model model) {
         model.addAttribute("name", userDetail.getEmployee().getName());
-        model.addAttribute("code", userDetail.getEmployee().getCode());
+        model.addAttribute("code", userDetail.getUsername());
         return "reports/new";
     }
 
     @PostMapping(value = "/add")
-    public String add(@Validated Report report, BindingResult res, @AuthenticationPrincipal UserDetail userDetail, Integer id,
+    public String add(@Validated  Report report, BindingResult res, @AuthenticationPrincipal UserDetail userDetail,
             Model model) {
 
         if (res.hasErrors()) {
-            model.addAttribute("name", userDetail.getEmployee().getName());
-            model.addAttribute("code", userDetail.getEmployee().getCode());
             return create(report, userDetail, model);
         }
-
-        ErrorKinds result = reportService.save(report);
+        ErrorKinds result = reportService.save(report, userDetail);
 
         if (ErrorMessage.contains(result)) {
             model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
             model.addAttribute("name", userDetail.getEmployee().getName());
             return create(report, userDetail, model);
         }
-        Integer generatedId = report.getId();
         return "redirect:/reports";
     }
+
+
+
+
+    //UPDATE
+
+    @GetMapping(value = "/{id}/update")
+    public String edit(@PathVariable("id") Integer id, Report report, Model model) {
+        if (id != null) {
+            Report existingReport = reportService.findById(id);
+            if (existingReport != null) {
+                report = existingReport;
+                            }
+        }
+        model.addAttribute("report", report);
+        return "reports/update";
+    }
+
+    @PostMapping("/{id}/update")
+    public String update(@Validated Report report, BindingResult res, @PathVariable("id") Integer id, @AuthenticationPrincipal UserDetail userDetail,
+            Model model) {
+        Report existingReport = reportService.findById(id);
+        existingReport.setEmployee(userDetail.getEmployee());
+
+                if (res.hasErrors())
+            return edit(id, report, model);
+
+        ErrorKinds result = reportService.update(report, existingReport);
+
+           if (ErrorMessage.contains(result)) {
+                model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+                return edit(id, report, model);
+            }
+
+
+        reportService.update(report, existingReport);
+        return "redirect:/reports";
+}
+
+
+
+        //DELETE
+
+    @PostMapping(value = "/{id}/delete")
+    public String delete(@PathVariable Integer id, @AuthenticationPrincipal UserDetail userDetail, Model model) {
+
+        ErrorKinds result = reportService.delete(id, userDetail);
+
+        if (ErrorMessage.contains(result)) {
+            model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+            model.addAttribute("report", reportService.findById(id));
+            return detail(id, model);
+        }
+
+        return "redirect:/reports";
+    }
+
 }

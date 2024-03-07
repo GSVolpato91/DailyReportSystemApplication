@@ -47,7 +47,7 @@ public class Report {
     private String content;
 
     // Foreign key
-    @Column(name = "employee_code", length = 10, insertable=false, updatable=false)
+    @Column(columnDefinition="VARCHAR(10)", name = "employee_code", length = 10, insertable=false, updatable=false)
     private String employeeCode;
 
     @ManyToOne
