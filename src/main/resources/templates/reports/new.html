@@ -37,8 +37,8 @@
                                     <div class="col-md-8">
                                         <label class="form-label" for="title">タイトル</label>
                                         <input type="text" class="form-control" id="title" th:field="*{title}" />
-                                        <p class="text-danger" th:if="${#fields.hasErrors('title')}"
-                                            th:errors="*{title}"></p>
+                                        <span th:errors="*{title}" class="text-danger"></span>
+                                            <span th:if="${titleError} neq null" th:text="${titleError}" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="mb-3">

@@ -36,18 +36,18 @@
                                 th:text="${name}"></div>
                             <div class="col-md-8 mt-3">
                                 <label class="form-label" for="title">タイトル</label>
-                                <input type="text" class="form-control" id="title" th:field="*{report.title}" />
-                                <span th:errors="*{report.title}" class="text-danger"></span>
-                                <span th:if="${titleError} neq null" th:text="${titleError}" class="text-danger"></span>
+                                <input type="text" class="form-control" id="title" th:field="*{reportTitle}" />
+                                <span th:errors="*{reportTitle}" class="text-danger"></span>
+                                <span th:if="${reportTitleError} neq null" th:text="${reportTitleError}" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="mb-3 ms-3">
                             <label class="form-label" for="content">内容</label>
                             <p class="mb-1">
                                 <textarea id="content" class="form-control" rows="8"
-                                    th:field="*{report.content}"></textarea>
-                            <p class="text-danger" th:if="${#fields.hasErrors('report.content')}"
-                                th:errors="*{report.content}"></p>
+                                    th:field="*{reportContent}"></textarea>
+                         <span th:errors="*{reportContent}" class="text-danger"></span>
+                                <span th:if="${reportContentError} neq null" th:text="${reportContentError}" class="text-danger"></span>
                             </p>
                             <div class="mb-4">
                                 <div class="col-md-4">
