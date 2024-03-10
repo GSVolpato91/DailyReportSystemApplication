@@ -1,6 +1,9 @@
 package com.techacademy.controller;
 
 
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.techacademy.constants.ErrorKinds;
 import com.techacademy.constants.ErrorMessage;
+import com.techacademy.entity.Employee;
 import com.techacademy.entity.Report;
 import com.techacademy.service.ReportService;
 import com.techacademy.service.UserDetail;
@@ -30,9 +34,19 @@ public class ReportController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("listSize", reportService.findAll().size());
-        model.addAttribute("reportList", reportService.findAll());
+    public String list(Model model, @AuthenticationPrincipal UserDetail userDetail) {
+        Employee.Role userRole = userDetail.getEmployee().getRole();
+
+        Employee userCode = userDetail.getEmployee();
+
+        List<Report> reportList;
+        if (userRole == Employee.Role.ADMIN) {
+            reportList = reportService.findAll();
+        } else {
+            reportList = reportService.findByEmployee(userCode);
+        }
+        model.addAttribute("listSize", reportList.size());
+        model.addAttribute("reportList", reportList);
         return "reports/list";
     }
 
@@ -75,26 +89,25 @@ public class ReportController {
 
     @GetMapping(value = "/{id}/update")
     public String edit(@ModelAttribute("report") Report report, @PathVariable("id") Integer id, @AuthenticationPrincipal UserDetail userDetail, Model model) {
-        if (id != null) {
-            Report existingReport = reportService.findById(id);
-            model.addAttribute("report", existingReport);
-        } else {
-            model.addAttribute("report", report);
+
+        if( id != null) {
+            model.addAttribute("report", reportService.findById(id));            }
+            else {
+                model.addAttribute("report", report);
+            }
+            return "reports/update";
         }
-        return "reports/update";
-    }
     @PostMapping("/{id}/update")
     public String update(@Validated Report report, BindingResult res, @PathVariable("id") Integer id,
             @AuthenticationPrincipal UserDetail userDetail, Model model) {
-
         if (res.hasErrors()) {
-            return edit(report,id,userDetail,model);
+            return edit(report, null, userDetail, model);
         }
         ErrorKinds result = reportService.update(report, userDetail);
 
         if (ErrorMessage.contains(result)) {
             model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
-            return edit(report,id, userDetail, model);
+            return edit(report,null, userDetail, model);
         }
 
         reportService.save(report, userDetail);

@@ -109,21 +109,21 @@ public class ReportService {
         if (ErrorKinds.CHECK_OK != result) {
             return result;
         }
-        List<Report> existingReports = reportRepository
-                .findByEmployeeCodeAndReportDate(userDetail.getEmployee().getCode(), report.getReportDate());
+
+        List<Report> existingReports = reportRepository.findByEmployee(userDetail.getEmployee());
 
         for (Report existingReport : existingReports) {
-            if (existingReport.getEmployeeCode().equals(userDetail.getEmployee().getCode())
-                    && existingReport.getReportDate().isEqual(report.getReportDate())) {
+            if (existingReport.getReportDate().isEqual(report.getReportDate())) {
                 return ErrorKinds.DATECHECK_ERROR;
             }
+        }
             LocalDateTime now = LocalDateTime.now();
             report.setDeleteFlg(false);
             report.setCreatedAt(now);
             report.setUpdatedAt(now);
 
             reportRepository.save(report);
-        }
+
         return ErrorKinds.SUCCESS;
     }
 }
