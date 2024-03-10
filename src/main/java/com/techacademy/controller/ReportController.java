@@ -1,5 +1,6 @@
 package com.techacademy.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -73,23 +74,27 @@ public class ReportController {
     // UPDATE
 
     @GetMapping(value = "/{id}/update")
-    public String edit(@PathVariable("id") Integer id, Report report, Model model) {
-            model.addAttribute("report", reportService.findById(id));
+    public String edit(@ModelAttribute("report") Report report, @PathVariable("id") Integer id, @AuthenticationPrincipal UserDetail userDetail, Model model) {
+        if (id != null) {
+            Report existingReport = reportService.findById(id);
+            model.addAttribute("report", existingReport);
+        } else {
+            model.addAttribute("report", report);
+        }
         return "reports/update";
     }
-
     @PostMapping("/{id}/update")
     public String update(@Validated Report report, BindingResult res, @PathVariable("id") Integer id,
             @AuthenticationPrincipal UserDetail userDetail, Model model) {
 
         if (res.hasErrors()) {
-            return edit(id, report, model);
+            return edit(report,id,userDetail,model);
         }
         ErrorKinds result = reportService.update(report, userDetail);
 
         if (ErrorMessage.contains(result)) {
             model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
-            return edit(id, report, model);
+            return edit(report,id, userDetail, model);
         }
 
         reportService.save(report, userDetail);
