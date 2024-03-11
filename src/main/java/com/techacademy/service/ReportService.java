@@ -44,8 +44,8 @@ public class ReportService {
     public ErrorKinds save(Report report, UserDetail userDetail) {
 
         Employee existingEmployee = userDetail.getEmployee();
-        report.getEmployeeCode();
         report.setEmployee(existingEmployee);
+        report.getEmployeeCode();
 
         ErrorKinds result = validateReport(report);
         if (ErrorKinds.CHECK_OK != result) {
@@ -117,11 +117,13 @@ public class ReportService {
                 return ErrorKinds.DATECHECK_ERROR;
             }
         }
+
+
             LocalDateTime now = LocalDateTime.now();
             report.setDeleteFlg(false);
             report.setCreatedAt(now);
             report.setUpdatedAt(now);
-
+            report.setEmployee(userDetail.getEmployee());
             reportRepository.save(report);
 
         return ErrorKinds.SUCCESS;
