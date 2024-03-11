@@ -51,7 +51,7 @@ public class Report {
     private String employeeCode;
 
     @ManyToOne
-    @JoinColumn(name = "employee_code", referencedColumnName = " code ", nullable = false)
+    @JoinColumn(name = "employee_code", referencedColumnName = "code", nullable = false)
     private Employee employee;
 
     @Column(columnDefinition = "TINYINT", nullable = false)

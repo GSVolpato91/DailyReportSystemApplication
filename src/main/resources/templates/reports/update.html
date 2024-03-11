@@ -22,7 +22,7 @@
                                 th:method="post">
                                 <div class="wizard wizard-success mb-1">
                                     <div class="col-md-5">
-                                        <label for="code">日付</label>
+                                        <label for="date">日付</label>
                                         <input type="date" class="form-control" id="date" th:field="*{reportDate}" />
                                         <span th:errors="*{reportDate}" class="text-danger"></span>
                                         <span th:if="${reportDateError} neq null" th:text="${reportDateError}"
@@ -33,7 +33,7 @@
                                     <label for="name">氏名</label>
                                 </div>
                                 <div>
-                                    <input type="hidden" id="name" name="name" th:text="*{employee.name}">
+                                 <label th:field="*{employee.name}"></label>
                                 </div>
                                     <div class="col-md-8 mt-3 mb-2">
                                         <label for="title">タイトル</label>
