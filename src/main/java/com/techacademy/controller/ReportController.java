@@ -111,7 +111,7 @@ public class ReportController {
             model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
             return edit(report, null, userDetail, model);
         }
-        reportService.save(report, userDetail);
+        reportService.update(report, userDetail);
         return "redirect:/reports";
     }
 
