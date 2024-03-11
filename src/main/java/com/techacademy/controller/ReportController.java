@@ -1,7 +1,5 @@
 package com.techacademy.controller;
 
-
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,28 +86,31 @@ public class ReportController {
     // UPDATE
 
     @GetMapping(value = "/{id}/update")
-    public String edit(@ModelAttribute("report") Report report, @PathVariable("id") Integer id, @AuthenticationPrincipal UserDetail userDetail, Model model) {
+    public String edit(@ModelAttribute("report") Report report, @PathVariable("id") Integer id,
+            @AuthenticationPrincipal UserDetail userDetail, Model model) {
 
-        if( id != null) {
-            model.addAttribute("report", reportService.findById(id));            }
-            else {
-                model.addAttribute("report", report);
-            }
-            return "reports/update";
+        if (id != null) {
+            model.addAttribute("report", reportService.findById(id));
+        } else {
+            model.addAttribute("report", report);
         }
+        return "reports/update";
+    }
+
     @PostMapping("/{id}/update")
     public String update(@Validated Report report, BindingResult res, @PathVariable("id") Integer id,
             @AuthenticationPrincipal UserDetail userDetail, Model model) {
+
         if (res.hasErrors()) {
+
             return edit(report, null, userDetail, model);
         }
         ErrorKinds result = reportService.update(report, userDetail);
 
         if (ErrorMessage.contains(result)) {
             model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
-            return edit(report,null, userDetail, model);
+            return edit(report, null, userDetail, model);
         }
-
         reportService.save(report, userDetail);
         return "redirect:/reports";
     }
