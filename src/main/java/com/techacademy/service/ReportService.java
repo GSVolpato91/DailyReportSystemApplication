@@ -113,7 +113,7 @@ public class ReportService {
         List<Report> existingReports = reportRepository.findByEmployee(userDetail.getEmployee());
 
         for (Report existingReport : existingReports) {
-            if (existingReport.getReportDate().isEqual(report.getReportDate())) {
+            if (!existingReport.getId().equals(report.getId()) && existingReport.getReportDate().isEqual(report.getReportDate())) {
                 return ErrorKinds.DATECHECK_ERROR;
             }
         }
